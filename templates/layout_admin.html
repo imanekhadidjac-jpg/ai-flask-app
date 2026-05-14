@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroScan AI - Admin Dashboard</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+
+        body {
+            background-color: #0f172a;
+            color: white;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background-color: #111827;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            transition: 0.3s;
+        }
+
+        .logo h2 {
+            color: #3b82f6;
+            margin-bottom: 40px;
+            text-align: center;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .menu li {
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .menu a {
+            color: #94a3b8;
+            text-decoration: none;
+            display: block;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu a:hover,
+        .menu li.active a {
+            background-color: #1e293b;
+            color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+        .menu li.logout {
+            margin-top: auto;
+        }
+
+        .menu li.logout a:hover {
+            color: #ef4444;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 30px 40px;
+            transition: 0.3s;
+            width: calc(100% - 260px);
+        }
+
+        /* TOPBAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .topbar h1 {
+            font-size: 30px;
+            font-weight: 600;
+        }
+
+        .topbar p {
+            color: #94a3b8;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #111827;
+            padding: 8px 15px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* CARDS */
+        .card {
+            background: #111827;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* RESPONSIVE */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        @media(max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                width: 100%;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+        }
+
+        @media(max-width: 576px) {
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .admin-profile {
+                align-self: flex-end;
+            }
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo">
+            <h2>🧠 NeuroScan AI</h2>
+        </div>
+        <ul class="menu">
+            <li class="{% if request.path == '/admin/dashboard' %}active{% endif %}">
+                <!--<a href="/admin/dashboard">📊 Dashboard</a>-->
+
+                <a href="/admin/dashboard">📊 Dashboard</a>
+            </li>
+
+            <li class="{% if request.path == '/admin/doctors' %}active{% endif %}">
+                <a href="/admin/doctors">👨‍⚕️ Doctors</a>
+            </li>
+
+            <li class="{% if request.path == '/admin/analytics' %}active{% endif %}">
+                <a href="/admin/analytics">📈 Analytics</a>
+            </li>
+
+            <li class="{% if request.path == '/admin/settings' %}active{% endif %}">
+                <a href="/admin/settings">⚙️ Settings</a>
+            </li>
+            <li class="logout">
+                <a href="/logout">🚪 Logout</a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="topbar">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="mobile-toggle"
+                    onclick="document.getElementById('sidebar').classList.toggle('show')">☰</button>
+                <div>
+                    <h1>{% block page_title %}Admin Dashboard{% endblock %}</h1>
+                    <p>{% block page_subtitle %}Alzheimer AI Monitoring System{% endblock %}</p>
+                </div>
+            </div>
+            <div class="admin-profile">
+                <span>Admin</span>
+                <div class="avatar">A</div>
+            </div>
+        </div>
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

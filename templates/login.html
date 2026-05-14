@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="auth-container card">
+    <div class="auth-header">
+        <h2>Doctor Login</h2>
+        <p class="text-muted">Access the Alzheimer Detection System</p>
+    </div>
+    
+    <form method="POST" action="{{ url_for('login') }}">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" class="form-control" required autocomplete="username">
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control" required autocomplete="current-password">
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Secure Login</button>
+    </form>
+    
+    <div class="text-center mt-4">
+        <p class="text-muted">Don't have an account? <a href="{{ url_for('signup') }}" style="color: var(--primary-color); font-weight: 600;">Sign up</a></p>
+    </div>
+</div>
+{% endblock %}

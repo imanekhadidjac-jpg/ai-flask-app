@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="patient-header">
+    <div>
+        <h2>Diagnostic Results: {{ patient.first_name }} {{ patient.last_name }}</h2>
+        <p class="text-muted">Analysis Date: {{ visit.date.strftime('%Y-%m-%d %H:%M') }}</p>
+    </div>
+    <div>
+        <a href="{{ url_for('patient_view', patient_id=patient.id) }}" class="btn btn-outline">Back to Patient</a>
+        <a href="{{ url_for('generate_report', visit_id=visit.id) }}" target="_blank" class="btn btn-primary ml-2">📄
+            Download PDF Report</a>
+    </div>
+</div>
+
+<div class="card mb-4 text-center">
+    <h3 style="color: var(--text-dark);">AI Prediction</h3>
+    <div style="margin: 1.5rem 0;">
+        <span
+            style="font-size: 2.5rem; font-weight: 700; color: {% if visit.prediction == 'NonDemented' %}var(--success){% elif visit.prediction == 'VeryMildDemented' %}#ffc107{% else %}var(--danger){% endif %};">
+            {{ visit.prediction }}
+        </span>
+    </div>
+    <p style="font-size: 1.2rem; color: var(--text-muted);">Confidence Score: <strong>{{ visit.confidence }}%</strong>
+    </p>
+</div>
+
+<h3 class="mb-4">Explainable AI (XAI) Analysis</h3>
+<div class="results-grid">
+    <!-- Original Image -->
+    <div class="card result-image-card">
+        <h4 style="margin-bottom: 1rem; color: var(--primary-color);">Original MRI</h4>
+        <img src="{{ url_for('static', filename=visit.image_path) }}" alt="Original MRI Scan">
+        <p class="text-muted" style="font-size: 0.9em;">Preprocessed input image fed to the deep learning model.</p>
+    </div>
+
+    <!-- GradCAM -->
+    <div class="card result-image-card">
+        <h4 style="margin-bottom: 1rem; color: var(--primary-color);">Grad-CAM</h4>
+        {% if visit.gradcam_path %}
+        <img src="{{ url_for('static', filename=visit.gradcam_path) }}" alt="Grad-CAM Visualization">
+        {% else %}
+        <p>Not available</p>
+        {% endif %}
+        <p class="text-muted" style="font-size: 0.9em;">Highlights the regions of the brain that the model focused on to
+            make its prediction.</p>
+    </div>
+
+    <!-- SHAP -->
+    <div class="card result-image-card">
+        <h4>SHAP Values</h4>
+
+        {% if visit.shap_path %}
+        <img src="{{ url_for('static', filename=visit.shap_path) }}">
+        <p>
+            Highlights the positive and negative contributions of brain regions influencing the Alzheimer
+            classification.
+        </p>
+        {% else %}
+
+        {% endif %}
+    </div>
+    <a href="{{ url_for('generate_gradcam', visit_id=visit.id) }}" class="btn btn-warning">
+        🔥 Generate GradCAM
+    </a>
+    <a href="{{ url_for('generate_shap', visit_id=visit.id) }}" class="btn btn-danger">
+        🔥 Generate SHAP
+    </a>
+</div>
+{% endblock %}

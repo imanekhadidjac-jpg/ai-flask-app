@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="patient-header">
+    <h2>Doctor Dashboard</h2>
+    <button class="btn btn-primary" onclick="document.getElementById('addPatientModal').style.display='block'">
+        + Add New Patient
+    </button>
+</div>
+
+<div class="card mb-4">
+    <form action="{{ url_for('dashboard') }}" method="GET" class="search-bar">
+        <input type="text" name="search" class="form-control" placeholder="Search patients by name..."
+            value="{{ search }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+        {% if search %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline">Clear</a>
+        {% endif %}
+    </form>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr>
+                    <td>{{ patient.id }}</td>
+                    <td>{{ patient.first_name }}</td>
+                    <td>{{ patient.last_name }}</td>
+                    <td>{{ patient.age }}</td>
+                    <td>{{ patient.gender }}</td>
+                    <td>
+                        <a href="{{ url_for('patient_view', patient_id=patient.id) }}" class="btn btn-outline"
+                            style="padding: 0.3rem 0.8rem; font-size: 0.9em;">View History & Scan</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted" style="padding: 2rem;">
+                        {% if search %}
+                        No patients found matching your search.
+                        {% else %}
+                        No patients registered yet. Add a new patient to get started.
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Simple Modal (In production, use proper dialog element or JS library) -->
+<div id="addPatientModal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000;">
+    <div class="card auth-container" style="margin-top: 10%;">
+        <div class="flex-between mb-4">
+            <h3 style="color: var(--primary-color);">Add New Patient</h3>
+            <button onclick="document.getElementById('addPatientModal').style.display='none'"
+                style="background:none; border:none; font-size: 1.5rem; cursor:pointer;">&times;</button>
+        </div>
+
+        <form method="POST" action="{{ url_for('add_patient') }}">
+            <div class="form-group">
+                <label>First Name</label>
+                <input type="text" name="first_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" name="last_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Age</label>
+                <input type="number" name="age" class="form-control" required min="0" max="150">
+            </div>
+            <div class="form-group">
+                <label>Gender</label>
+                <select name="gender" class="form-control" required>
+                    <option value="">Select...</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Save Patient</button>
+        </form>
+    </div>
+</div>
+<p class="text-muted">Total patients: {{ patients|length }}</p>
+{% endblock %}
