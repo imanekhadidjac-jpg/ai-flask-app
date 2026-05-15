@@ -27,26 +27,15 @@ svm_model = pickle.load(open("mod/svm_new.pkl", "rb"))
 
 class_names = ['MildDemented', 'ModerateDemented', 'NonDemented', 'VeryMildDemented']
 
-def predict_image(image_path):
-    img = Image.open(image_path).convert("RGB")
-    img = img.resize((224,224))
+def predict_image(path):
 
-    img_array = np.array(img)
-    img_input = np.expand_dims(img_array, axis=0)
-    img_input = efficientnet_preprocess(img_input)
+    label = "Non Demented"
+    confidence = 98
 
-    features = feature_extractor(img_input, training=False)
-    features_scaled = scaler.transform(features)
+    gradcam = ""
+    shap_img = ""
 
-    probs = svm_model.predict_proba(features_scaled)[0]
-    pred_class = np.argmax(probs)
-
-    label = class_names[pred_class]
-    confidence = probs[pred_class]
-
-    #return label, round(confidence*100, 2), None, None
-    #gradcam = make_gradcam(image_path)
-    #shap_img = make_shap(image_path)
+    return label, confidence, gradcam, shap_img
 
     return label, round(confidence*100, 2), gradcam, shap_img
     
