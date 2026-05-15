@@ -1,8 +1,8 @@
 import os
 import cv2
-import tensorflow as tf
+#import tensorflow as tf
 import pickle
-import shap
+#import shap
 import matplotlib
 matplotlib.use('Agg') # to avoid GUI errors
 import matplotlib.pyplot as plt
@@ -45,8 +45,8 @@ def predict_image(image_path):
     confidence = probs[pred_class]
 
     #return label, round(confidence*100, 2), None, None
-    gradcam = make_gradcam(image_path)
-    shap_img = make_shap(image_path)
+    #gradcam = make_gradcam(image_path)
+    #shap_img = make_shap(image_path)
 
     return label, round(confidence*100, 2), gradcam, shap_img
     
