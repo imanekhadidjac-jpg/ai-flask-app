@@ -1,7 +1,7 @@
 Flask
 Flask-SQLAlchemy
 gunicorn
-tensorflow-cpu==2.13.0
+tensorflow==2.13.0
 opencv-python-headless
 numpy
 Pillow
