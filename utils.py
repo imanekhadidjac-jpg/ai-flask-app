@@ -134,48 +134,14 @@ def make_gradcam(img_path):
 
 def make_shap(img_path):
     try:
-        import time
-        import gc
-        gc.collect()
-
-        correct_img_path = os.path.normpath(img_path)
-        if not os.path.exists(correct_img_path):
-            correct_img_path = os.path.normpath(os.path.join("static", img_path.replace("static/", "").replace("static\\", "")))
-
-        img = image.load_img(correct_img_path, target_size=(224, 224))
-        img_array = image.img_to_array(img)
-        x = np.expand_dims(img_array, axis=0)
-
-        def predict_pipeline(numpy_images):
-            preprocessed = preprocess_input(numpy_images.copy())
-            model = get_feature_extractor()
-            features = model(preprocessed, training=False)
-            if scaler is None or svm_model is None:
-                return np.array([[0.25, 0.25, 0.25, 0.25]])
-            features_scaled = scaler.transform(features)
-            return svm_model.predict_proba(features_scaled)
-
-        masker = shap.maskers.Image("blur(128,128)", x[0].shape)
-        explainer = shap.Explainer(predict_pipeline, masker, output_names=class_names)
-        shap_values = explainer(x, max_evals=50, batch_size=1)
-
-        shap_values.data = np.array(shap_values.data, dtype=np.float32) / 255.0
-        plt.clf()
-        plt.close('all')
-
-        shap.plots.image(shap_values[0], show=False)
-
-        filename = f"shap_{int(time.time())}.png"
-        save_path = os.path.normpath(os.path.join("static", "uploads", filename))
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        
-        fig = plt.gcf()
-        fig.set_size_inches(18, 6) 
-        plt.savefig(save_path, bbox_inches='tight', dpi=100)
-        plt.close('all')
-        gc.collect()
-
-        return f"uploads/{filename}"
+       def make_shap(img_path):
+    try:
+        # تعطيل الحسابات الثقيلة مؤقتاً لتفادي Bad Gateway 502
+        filename = f"gradcam_{os.path.basename(img_path)}"
+        return f"uploads/{filename}" 
+    except Exception as e:
+        print("خطأ في SHAP:", e)
+        return None
     except Exception as e:
         print("خطأ في SHAP:", e)
         return None
