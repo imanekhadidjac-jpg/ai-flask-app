@@ -10,3 +10,4 @@ opencv-python-headless==4.8.0.76
 fpdf==1.7.2
 flask-admin==2.2.0
 tensorflow-cpu==2.13.0
+shap
